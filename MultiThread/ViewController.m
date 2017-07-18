@@ -7,13 +7,13 @@
 //
 
 #import "ViewController.h"
-#import "YXGCtrNSThread.h"
-#import "YXGCtrNSThreadConcurrent.h"
+#import "YXGNSThread.h"
+#import "YXGNSThreadConcurrent.h"
 
-#import "YXGCtrNSOperation.h"
-#import "YXGctrNSInvocationOperation.h"
+#import "YXGBlockOperation.h"
+#import "YXGNSInvocationOperation.h"
 
-#import "YXGCtrGCD.h"
+#import "YXGGCD.h"
 
 @interface ViewController ()
 
@@ -43,15 +43,20 @@
 - (void)pushCtr:(UIButton *)sender{
     switch (sender.tag) {
         case 0:
-            [self presentViewController:[YXGCtrNSThreadConcurrent new] animated:YES completion:nil];
-//            [self.navigationController pushViewController:[YXGCtrNSThread new] animated:YES];
+            [self.navigationController pushViewController:[YXGNSThreadConcurrent new] animated:YES];
+//            [self presentViewController:[YXGNSThreadConcurrent new] animated:YES completion:nil];
             break;
         case 1:
-            [self presentViewController:[YXGctrNSInvocationOperation new] animated:YES completion:nil];
+            [self.navigationController pushViewController:[YXGBlockOperation new] animated:YES];
+
+//            [self presentViewController:[YXGBlockOperation new] animated:YES completion:nil];
+//          [self presentViewController:[YXGNSInvocationOperation new] animated:YES completion:nil];
 
             break;
         case 2:
-            [self presentViewController:[YXGCtrGCD new] animated:YES completion:nil];
+            [self.navigationController pushViewController:[YXGGCD new] animated:YES];
+
+//            [self presentViewController:[YXGGCD new] animated:YES completion:nil];
 
             break;
  

@@ -1,5 +1,5 @@
 //
-//  YXGCtrNSThreadConcurrent.h
+//  YXGCtrNSOperation.h
 //  MultiThread
 //
 //  Created by rongyun on 2017/7/17.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface YXGCtrNSThreadConcurrent : UIViewController
+@interface YXGBlockOperation : UIViewController
 
 @end

@@ -1,5 +1,5 @@
 //
-//  YXGCtrGCD.h
+//  YXGctrNSInvocationOperation.h
 //  MultiThread
 //
 //  Created by rongyun on 2017/7/17.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface YXGCtrGCD : UIViewController
+@interface YXGNSInvocationOperation : UIViewController
 
 @end

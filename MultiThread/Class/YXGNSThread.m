@@ -6,15 +6,15 @@
 //  Copyright © 2017年 YXGang. All rights reserved.
 //
 
-#import "YXGCtrNSThread.h"
+#import "YXGNSThread.h"
 
-@interface YXGCtrNSThread (){
+@interface YXGNSThread (){
     UIImageView *_imageView;
 }
 
 @end
 
-@implementation YXGCtrNSThread
+@implementation YXGNSThread
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -24,7 +24,7 @@
 
 #pragma mark - 界面布局
 - (void)layoutUI{
-    _imageView =[[UIImageView alloc]initWithFrame:CGRectMake(10, 10, self.view.frame.size.width-20, self.view.frame.size.height - 100)];
+    _imageView =[[UIImageView alloc]initWithFrame:CGRectMake(10, 74, self.view.frame.size.width-20, self.view.frame.size.height - 100)];
     _imageView.contentMode=UIViewContentModeScaleAspectFit;
     [self.view addSubview:_imageView];
     
@@ -45,7 +45,7 @@
 #pragma mark 请求图片数据
 -(NSData *)requestData{
     NSURL *url=[NSURL URLWithString:@"http://pic7.nipic.com/20100515/2001785_115623014419_2.jpg"];
-    [NSThread sleepForTimeInterval:5];
+    [NSThread sleepForTimeInterval:3];
     NSData *data=[NSData dataWithContentsOfURL:url];
     return data;
 }

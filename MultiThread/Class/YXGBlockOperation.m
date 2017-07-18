@@ -4,24 +4,24 @@
 //
 //  Created by rongyun on 2017/7/17.
 //  Copyright © 2017年 YXGang. All rights reserved.
-//
+// 采用NSBlockOperation创建多个线程加载图片。
 
-#import "YXGCtrNSOperation.h"
+#import "YXGBlockOperation.h"
 
 #define ROW_COUNT 5
 #define COLUMN_COUNT 3
 #define ROW_HEIGHT 100
 #define ROW_WIDTH ROW_HEIGHT
-#define CELL_SPACING 10
+#define CELL_SPACING ([UIScreen mainScreen].bounds.size.width-3*ROW_HEIGHT)/4
 
-@interface YXGCtrNSOperation (){
+@interface YXGBlockOperation (){
     NSMutableArray *_imageViews;
     NSMutableArray *_imageNames;
 }
 
 @end
 
-@implementation YXGCtrNSOperation
+@implementation YXGBlockOperation
 
 - (void)viewDidLoad {
     self.view.backgroundColor = [UIColor whiteColor];
@@ -35,7 +35,7 @@
     _imageViews=[NSMutableArray array];
     for (int r=0; r<ROW_COUNT; r++) {
         for (int c=0; c<COLUMN_COUNT; c++) {
-            UIImageView *imageView=[[UIImageView alloc]initWithFrame:CGRectMake(c*ROW_WIDTH+(c*CELL_SPACING), r*ROW_HEIGHT+(r*CELL_SPACING                           ), ROW_WIDTH, ROW_HEIGHT)];
+            UIImageView *imageView=[[UIImageView alloc]initWithFrame:CGRectMake(c*ROW_WIDTH+(c*CELL_SPACING) + CELL_SPACING, r*ROW_HEIGHT+(r*CELL_SPACING) + 74, ROW_WIDTH, ROW_HEIGHT)];
             imageView.contentMode=UIViewContentModeScaleAspectFit;
             //            imageView.backgroundColor=[UIColor redColor];
             [self.view addSubview:imageView];
@@ -48,7 +48,7 @@
     button.frame=CGRectMake(50, self.view.frame.size.height - 50, 100, 25);
     [button setTitle:@"加载图片" forState:UIControlStateNormal];
     //添加方法
-    [button addTarget:self action:@selector(loadImageWithMultiThread) forControlEvents:UIControlEventTouchUpInside];
+    [button addTarget:self action:@selector(loadImageWithMultiThreadOrderly) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:button];
     
     //创建图片链接
@@ -68,7 +68,7 @@
 #pragma mark 请求图片数据
 -(NSData *)requestData:(int)index{
     NSURL *url=[NSURL URLWithString:@"http://pic7.nipic.com/20100515/2001785_115623014419_2.jpg"];
-    [NSThread sleepForTimeInterval:5];
+    [NSThread sleepForTimeInterval:3];
     NSData *data=[NSData dataWithContentsOfURL:url];
     return data;
 }
@@ -101,6 +101,34 @@
     }
     
 }
+
+#pragma mark 多线程下载图片 线程顺序控制
+- (void)loadImageWithMultiThreadOrderly{
+    int count = ROW_COUNT * COLUMN_COUNT;
+    //创建队列
+    NSOperationQueue *queue = [[NSOperationQueue alloc]init];
+    queue.maxConcurrentOperationCount = 5;//设置最大并发数
+    
+    NSBlockOperation *lastBlockOperation = [NSBlockOperation blockOperationWithBlock:^{
+        [self loadImage:[NSNumber numberWithInt:(count - 1)]];
+    }];
+    //创建多个线程用于填充图片
+    for (int i = 0; i < count - 1; i ++) {
+        //创建操作块添加到队列
+        //1：创建多线程操作
+        NSBlockOperation *blockOPeration = [NSBlockOperation blockOperationWithBlock:^{
+            [self loadImage:[NSNumber numberWithInt:i]];
+        }];
+        //设置依赖操作为最后一张图片加载操作
+        [blockOPeration addDependency:lastBlockOperation];
+        
+        [queue addOperation:blockOPeration];
+    }
+    //将最后一个图片的加载操作加入线程队列
+    [queue addOperation:lastBlockOperation];
+    
+}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

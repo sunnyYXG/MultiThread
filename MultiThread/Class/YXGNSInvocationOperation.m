@@ -4,11 +4,11 @@
 //
 //  Created by rongyun on 2017/7/17.
 //  Copyright © 2017年 YXGang. All rights reserved.
-//
+// 使用NSInvocationOperation进行一张图片的加载演示
 
-#import "YXGctrNSInvocationOperation.h"
+#import "YXGNSInvocationOperation.h"
 
-@interface YXGctrNSInvocationOperation (){
+@interface YXGNSInvocationOperation (){
     UIImageView *_imageView;
 }
 
@@ -16,7 +16,7 @@
 
 @end
 
-@implementation YXGctrNSInvocationOperation
+@implementation YXGNSInvocationOperation
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -47,7 +47,7 @@
 #pragma mark 请求图片数据
 -(NSData *)requestData{
     NSURL *url=[NSURL URLWithString:@"http://pic7.nipic.com/20100515/2001785_115623014419_2.jpg"];
-    [NSThread sleepForTimeInterval:5];
+    [NSThread sleepForTimeInterval:3];
     NSData *data=[NSData dataWithContentsOfURL:url];
     return data;
 }
@@ -68,6 +68,9 @@
 #pragma mark 多线程下载图片
 -(void)loadImageWithMultiThread{
     NSInvocationOperation *invocationOperation=[[NSInvocationOperation alloc]initWithTarget:self selector:@selector(loadImage) object:nil];
+    //创建完NSInvocationOperation对象并不会调用，它由一个start方法启动操作，但是注意如果直接调用start方法，则此操作会在主线程中调用，一般不会这么操作,而是添加到NSOperationQueue中
+    //    [invocationOperation start];
+    
     //创建操作队列
     NSOperationQueue *operationQueue=[[NSOperationQueue alloc]init];
     //注意添加到操作队后，队列会开启一个线程执行此操作

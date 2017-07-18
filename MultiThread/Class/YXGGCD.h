@@ -1,5 +1,5 @@
 //
-//  YXGCtrNSThread.h
+//  YXGCtrGCD.h
 //  MultiThread
 //
 //  Created by rongyun on 2017/7/17.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface YXGCtrNSThread : UIViewController
+@interface YXGGCD : UIViewController
 
 @end

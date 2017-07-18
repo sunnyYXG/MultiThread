@@ -4,18 +4,18 @@
 //
 //  Created by rongyun on 2017/7/17.
 //  Copyright © 2017年 YXGang. All rights reserved.
-// 多个线程并发 加载多张图片
+//  多个线程并发 加载多张图片  以及停止加载
 
-#import "YXGCtrNSThreadConcurrent.h"
+#import "YXGNSThreadConcurrent.h"
 #import "ImageData.h"
 
 #define ROW_COUNT 5
 #define COLUMN_COUNT 3
 #define ROW_HEIGHT 100
 #define ROW_WIDTH ROW_HEIGHT
-#define CELL_SPACING 10
+#define CELL_SPACING ([UIScreen mainScreen].bounds.size.width-3*ROW_HEIGHT)/4
 
-@interface YXGCtrNSThreadConcurrent (){
+@interface YXGNSThreadConcurrent (){
     NSMutableArray *_imageViews;
     NSMutableArray *_imageNames;
     NSMutableArray *_threads;
@@ -23,7 +23,7 @@
 
 @end
 
-@implementation YXGCtrNSThreadConcurrent
+@implementation YXGNSThreadConcurrent
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -37,7 +37,7 @@
     _imageViews=[NSMutableArray array];
     for (int r=0; r<ROW_COUNT; r++) {
         for (int c=0; c<COLUMN_COUNT; c++) {
-            UIImageView *imageView=[[UIImageView alloc]initWithFrame:CGRectMake(c*ROW_WIDTH+(c*CELL_SPACING), r*ROW_HEIGHT+(r*CELL_SPACING                           ), ROW_WIDTH, ROW_HEIGHT)];
+            UIImageView *imageView=[[UIImageView alloc]initWithFrame:CGRectMake(c*ROW_WIDTH+(c*CELL_SPACING) + CELL_SPACING, r*ROW_HEIGHT+(r*CELL_SPACING) + 74, ROW_WIDTH, ROW_HEIGHT)];
             imageView.contentMode=UIViewContentModeScaleAspectFit;
             //            imageView.backgroundColor=[UIColor redColor];
             [self.view addSubview:imageView];
@@ -83,12 +83,13 @@
     }
 
     NSURL *url=[NSURL URLWithString:@"http://pic7.nipic.com/20100515/2001785_115623014419_2.jpg"];
-    [NSThread sleepForTimeInterval:5];
+    [NSThread sleepForTimeInterval:3];
     NSData *data=[NSData dataWithContentsOfURL:url];
     return data;
 }
 #pragma mark 加载图片
 -(void)loadImage:(NSNumber *)index{
+    NSLog(@"thread is :%@",[NSThread currentThread]);
     int i = [index intValue];
     NSData *Data = [self requestData:i];
     
@@ -105,7 +106,7 @@
     [self performSelectorOnMainThread:@selector(updateImage:) withObject:imageData waitUntilDone:YES];
 }
 
-#pragma mark 多线程下载图片
+#pragma mark 多线程下载多张图片
 -(void)loadImageWithMultiThread{
     for (int i=0; i<ROW_COUNT*COLUMN_COUNT; ++i) {
         //        [NSThread detachNewThreadSelector:@selector(loadImage:) toTarget:self withObject:[NSNumber numberWithInt:i]];
@@ -116,7 +117,7 @@
     
 }
 
-#pragma mark 多线程下载图片 改变加载图片优先级
+#pragma mark 多线程下载多张图片 改变加载图片优先级
 -(void)loadImageWithMultiThreads{
     _threads = [[NSMutableArray alloc]init];
     NSInteger count = ROW_COUNT * COLUMN_COUNT;
